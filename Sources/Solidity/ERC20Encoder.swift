@@ -239,4 +239,30 @@ public final class ERC20Encoder {
         try! encoder.encode(function: function, arguments: [tokensBought, maxTokensSold, maxTrxSold, deadline, tokenAddr])
         return encoder.data
     }
+    
+    /// Encodes a function call to `queryDIDAddress`
+    ///
+    /// Solidity function: `function queryDIDAddress(String did) public returns (address);`
+    public static func encodeQueryDIDAddress(did: String) -> Data {
+        let function = Function(name: "queryAddress", parameters: [.string])
+        let encoder = ABIEncoder()
+        try! encoder.encode(function: function, arguments: [did])
+        return encoder.data
+    }
+    
+    /// Swap V3
+    public static func encodeSwapExactInput(path: [Address],
+                                            poolVersion: [String],
+                                            versionLen: [BigUInt],
+                                            fees: [BigUInt],
+                                            tuple: [Any]) -> Data {
+        let function = Function(name: "swapExactInput", parameters: [.dynamicArray(.address),
+                                                                     .dynamicArray(.string),
+                                                                     .dynamicArray(.uint(bits: 256)),
+                                                                     .dynamicArray(.uint(bits: 24)),
+                                                                     .tuple([.uint(bits: 256), .uint(bits: 256), .address, .uint(bits: 256)])])
+        let encoder = ABIEncoder()
+        try! encoder.encode(function: function, arguments: [path, poolVersion, versionLen, fees, tuple])
+        return encoder.data
+    }
 }
