@@ -96,7 +96,17 @@ public indirect enum ABIValue {
             let dataLength = string.data(using: .utf8)?.count ?? 0
             return 32 + ((dataLength + 31) / 32) * 32
         case .dynamicArray(_, let array):
-            return 32 + array.reduce(0, { $0 + $1.length })
+            var isDynamic = true
+            for item in array {
+                if !item.isDynamic {
+                    isDynamic = false
+                }
+            }
+            if isDynamic {
+                return 32 + (array.count * 32) + array.reduce(0, { $0 + $1.length })
+            } else {
+                return 32 + array.reduce(0, { $0 + $1.length })
+            }
         case .tuple(let array):
             return array.reduce(0, { $0 + $1.length })
         }
